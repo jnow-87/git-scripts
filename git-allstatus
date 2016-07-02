@@ -1,12 +1,12 @@
 #!/bin/bash
 
 
-remote="home"
 cdir=$PWD
 
 
-if [ $1 ];then
-	remote=$1
+if [ $# -lt 1 ];then
+	echo -e "usage: $0 {<remote>}"
+	exit 1
 fi
 
 # make field separation based on newline
@@ -17,30 +17,36 @@ IFS=$'\n'
 for el in $(find -name '.git')
 do
 	path=$(dirname $el)
-	printf "%50.50s:" $path
 	
 	cd $path
-	msg=$(git remote show $remote 2>/dev/null)
-	e=$?
+
+	for remote in $@
+	do
+		msg=$(git remote show $remote 2>/dev/null)
+		e=$?
+
+		printf "\t%s (%s):" $path $remote
+
+		if [ $e -eq 0 ];then
+			if [ "$(echo $msg | grep 'fast-forwardable')" != "" ];then
+				echo -ne " \033[33mfast forwardable\033[0m"
+			fi
+
+			if [ "$(echo $msg | grep 'out of date')" != "" ];then
+				echo -ne " \033[35mout of date\033[0m"
+			fi
+
+			if [ "$(echo $msg | grep 'up to date')" != "" ];then
+				echo -ne " \033[32mup to date\033[0m"
+			fi
+		else
+			echo -ne " \033[31merror\033[0m"
+		fi
+
+		echo
+	done
+
 	cd $cdir
-
-	if [ $e -eq 0 ];then
-		if [ "$(echo $msg | grep 'fast-forwardable')" != "" ];then
-			echo -ne " \033[33mfast forwardable\033[0m"
-		fi
-
-		if [ "$(echo $msg | grep 'out of data')" != "" ];then
-			echo -ne " \033[31mout of date\033[0m"
-		fi
-
-		if [ "$(echo $msg | grep 'up to date')" != "" ];then
-			echo -ne " \033[32mup to date\033[0m"
-		fi
-	else
-		echo -ne " \033[31merror\033[0m"
-	fi
-
-	echo
 done
 
 # restore field separation
