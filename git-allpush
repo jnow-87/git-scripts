@@ -1,0 +1,39 @@
+#!/bin/bash
+
+
+cdir=$PWD
+
+if [ $# -lt 1 ];then
+	echo -e "usage: $(basename $0) {<remote>}"
+	exit 1
+fi
+
+# make field separation based on newline
+_ifs="$IFS"
+IFS=$'\n'
+
+# iterate over available .git directories
+for dir in $(find -name '.git')
+do
+	path=$(dirname ${dir})
+	
+	cd $path
+
+	for remote in $@ 
+	do
+		echo -ne "\t${path} ${remote} "
+
+		git push ${remote} 1>&2 2>/dev/null
+
+		if [ $? -eq 0 ];then
+			echo -e "\033[32mok\033[0m"
+		else
+			echo -e "\033[31merror\033[0m"
+		fi
+	done
+
+	cd $cdir
+done
+
+# restore field separation
+IFS="$_ifs"
