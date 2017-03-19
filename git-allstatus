@@ -5,7 +5,7 @@ cdir=$PWD
 
 
 if [ $# -lt 1 ];then
-	echo -e "usage: $0 {<remote>}"
+	echo -e "usage: $(basename $0) {<remote>}"
 	exit 1
 fi
 
