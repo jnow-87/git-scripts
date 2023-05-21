@@ -22,25 +22,29 @@ do
 
 	for remote in $@
 	do
+		printf "\t%s (%s): " $path $remote
+
+		if [ "$(git remote show | grep $remote)" == "" ];then
+			echo -e "\033[33mmissing\033[0m"
+			continue
+		fi
+
 		msg=$(git remote show $remote 2>/dev/null)
-		e=$?
 
-		printf "\t%s (%s):" $path $remote
-
-		if [ $e -eq 0 ];then
+		if [ $? -eq 0 ];then
 			if [ "$(echo $msg | grep 'fast-forwardable')" != "" ];then
-				echo -ne " \033[33mfast forwardable\033[0m"
+				echo -ne "\033[33mfast forwardable\033[0m "
 			fi
 
 			if [ "$(echo $msg | grep 'out of date')" != "" ];then
-				echo -ne " \033[35mout of date\033[0m"
+				echo -ne "\033[35mout of date\033[0m "
 			fi
 
 			if [ "$(echo $msg | grep 'up to date')" != "" ];then
-				echo -ne " \033[32mup to date\033[0m"
+				echo -ne "\033[32mup to date\033[0m "
 			fi
 		else
-			echo -ne " \033[31merror\033[0m"
+			echo -ne "\033[31merror\033[0m"
 		fi
 
 		echo
