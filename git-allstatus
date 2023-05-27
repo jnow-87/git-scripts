@@ -3,12 +3,6 @@
 
 cdir=$PWD
 
-
-if [ $# -lt 1 ];then
-	echo -e "usage: $(basename $0) {<remote>}"
-	exit 1
-fi
-
 # make field separation based on newline
 _ifs="$IFS"
 IFS=$'\n'
@@ -20,12 +14,16 @@ do
 	
 	cd $path
 
+	echo -n "$path"
+	[ -n "$(git status --porcelain 2>/dev/null)" ] && echo -ne " (\033[36mdirty\033[0m)"
+	echo -n ": "
+
 	for remote in $@
 	do
-		printf "\t%s (%s): " $path $remote
+		echo -ne "$remote "
 
 		if [ "$(git remote show | grep $remote)" == "" ];then
-			echo -e "\033[33mmissing\033[0m"
+			echo -ne "\033[33mmissing\033[0m "
 			continue
 		fi
 
@@ -44,12 +42,11 @@ do
 				echo -ne "\033[32mup to date\033[0m "
 			fi
 		else
-			echo -ne "\033[31merror\033[0m"
+			echo -ne "\033[31merror\033[0m "
 		fi
-
-		echo
 	done
 
+	echo
 	cd $cdir
 done
 
