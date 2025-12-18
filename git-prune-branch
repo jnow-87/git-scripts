@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# cleanup remote branches
+git fetch --prune
+
+# remove merged local branches
+merged=$(git branch --merged | grep -v -e '^* ')
+[ "${merged}" == "" ] || git branch -d ${merged}
