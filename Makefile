@@ -17,8 +17,8 @@ rm := rm
 
 # format: <target>=<source>
 files += \
-	$(PREFIX)/git-allpush=git-allpush \
-	$(PREFIX)/git-allstatus=git-allstatus \
+	$(PREFIX)/git-all-push=git-all-push \
+	$(PREFIX)/git-all-status=git-all-status \
 	$(PREFIX)/git-reauther=git-reauthor \
 	$(PREFIX)/git-versiontree=git-versiontree
 
